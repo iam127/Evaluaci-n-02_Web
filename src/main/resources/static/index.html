@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión Hospitalaria - Módulo Pacientes</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <header>
+        <h1>🏥 Sistema de Gestión Hospitalaria</h1>
+        <p>Módulo de Gestión de Pacientes</p>
+    </header>
+
+    <!-- Formulario de Registro/Edición -->
+    <div class="card">
+        <h2 id="formTitle">Registrar Nuevo Paciente</h2>
+        <form id="pacienteForm">
+            <input type="hidden" id="idPaciente">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="dni">DNI *</label>
+                    <input type="text" id="dni" maxlength="8" pattern="[0-9]{8}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="fechaNacimiento">Fecha de Nacimiento *</label>
+                    <input type="date" id="fechaNacimiento" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nombres">Nombres *</label>
+                    <input type="text" id="nombres" maxlength="100" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="apellidos">Apellidos *</label>
+                    <input type="text" id="apellidos" maxlength="100" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="sexo">Sexo *</label>
+                    <select id="sexo" required>
+                        <option value="">Seleccione...</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="telefono">Teléfono *</label>
+                    <input type="tel" id="telefono" maxlength="15" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="correo">Correo Electrónico *</label>
+                <input type="email" id="correo" maxlength="100" required>
+            </div>
+
+            <div class="form-group">
+                <label for="direccion">Dirección *</label>
+                <textarea id="direccion" rows="2" maxlength="200" required></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="btnGuardar">
+                    💾 Guardar Paciente
+                </button>
+                <button type="button" class="btn btn-secondary" id="btnCancelar">
+                    ❌ Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Filtros y Búsqueda -->
+    <div class="card">
+        <h2>📋 Lista de Pacientes</h2>
+        <div class="filters">
+            <button class="btn btn-filter active" onclick="filtrarPacientes('todos')">
+                Todos
+            </button>
+            <button class="btn btn-filter" onclick="filtrarPacientes('activos')">
+                Activos
+            </button>
+            <button class="btn btn-filter" onclick="filtrarPacientes('inactivos')">
+                Inactivos
+            </button>
+            <button class="btn btn-refresh" onclick="cargarPacientes()">
+                🔄 Actualizar
+            </button>
+        </div>
+
+        <!-- Tabla de Pacientes -->
+        <div class="table-container">
+            <table id="tablaPacientes">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>DNI</th>
+                    <th>Nombres Completos</th>
+                    <th>Fecha Nac.</th>
+                    <th>Sexo</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody id="tbodyPacientes">
+                <tr>
+                    <td colspan="9" class="loading">Cargando pacientes...</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Sistema de Gestión Hospitalaria | Módulo Pacientes</p>
+    </footer>
+</div>
+
+<!-- Modal de Confirmación -->
+<div id="modalConfirm" class="modal">
+    <div class="modal-content">
+        <h3>⚠️ Confirmar Acción</h3>
+        <p id="modalMessage"></p>
+        <div class="modal-actions">
+            <button class="btn btn-danger" id="btnConfirmar">Confirmar</button>
+            <button class="btn btn-secondary" id="btnCancelarModal">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Antecedentes Médicos -->
+<div id="modalAntecedentes" class="modal">
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h3>📋 Antecedentes Médicos</h3>
+            <button class="btn-close" onclick="cerrarModalAntecedentes()">✕</button>
+        </div>
+
+        <div class="paciente-info" id="pacienteInfo"></div>
+
+        <!-- Formulario de Antecedentes -->
+        <div class="antecedente-form">
+            <h4>Agregar Nuevo Antecedente</h4>
+            <form id="antecedenteForm">
+                <input type="hidden" id="idHistoriaAntecedente">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tipoAntecedente">Tipo *</label>
+                        <select id="tipoAntecedente" required>
+                            <option value="">Seleccione...</option>
+                            <option value="Alergia">Alergia</option>
+                            <option value="Enfermedad Previa">Enfermedad Previa</option>
+                            <option value="Cirugía">Cirugía</option>
+                            <option value="Medicamento Crónico">Medicamento Crónico</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcionAntecedente">Descripción *</label>
+                    <textarea id="descripcionAntecedente" rows="3" maxlength="500" required
+                              placeholder="Describa el antecedente médico..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    ➕ Agregar Antecedente
+                </button>
+            </form>
+        </div>
+
+        <!-- Lista de Antecedentes -->
+        <div class="antecedentes-lista">
+            <h4>Antecedentes Registrados</h4>
+            <div id="listaAntecedentes" class="loading">Cargando antecedentes...</div>
+        </div>
+    </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
